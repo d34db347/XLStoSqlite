@@ -10,6 +10,8 @@
     This is a noted design flaw that will be considered in future implementations.
     This may require an interactive version of this program.
 @todo: All or none situation with header rows
+@attention: At this time, only allowing alpha-numeric names for tables. If workbook is named something like
+    'book.123.xls', the tables created will be prefixed by 'book123'
 @param -i: str, This is the name of the Excel file to be copied into the table. 
 @param -o: str, This is the name of the sqlite database the file is to be copied to.
 @param -nohdr: boolean, Indicates sheets in excel workbook have no header
@@ -18,6 +20,7 @@
 @raise IOError: Raises IO error if cannot open Excel file. A bad location may have been supplied, or the file is corrupted or 
     password protected.
 @raise Any error that can be raised by sqlite3. http://legacy.python.org/dev/peps/pep-0249/
+
     
 '''
 import sqlite3
@@ -25,6 +28,7 @@ import xlrd
 import argparse
 import createTable
 import fillTable
+import os
 
 # set up command line arguments
 parser = argparse.ArgumentParser(description='Create new table in database with an excel file.')
@@ -43,15 +47,15 @@ args = parser.parse_args()
 db = args.o
 # input xls file
 xls = args.i
+(xls_path, xlsfile) = os.path.split(xls)
+
 # parse xls file name to see if it's good
 goodext = ['xls', 'xlsx']
-xt = xls.split('.')
+xt = xlsfile.split('.')
 if xt[len(xt) - 1] not in goodext:
     raise ValueError('Input file must be .xls or .xlsx filetype')
 # get name of workbook
-#todo: this may not work on linux system etc where the name of the file is work.book.xls or some such..
-xtt = xt[0].split('\\')
-workbook_name = xtt[len(xtt)-1]
+workbook_name = xt[0] if len(xt)==2 else ''.join(xt[:-1])
 # does this data have header rows?
 header = not args.nohdr
 # how many rows to be inserted at a time
