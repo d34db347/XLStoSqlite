@@ -15,7 +15,7 @@ The script shall create the SQLite table structure (columns, data) based on the
 defined excel file. Please note the excel file is having data with UTF-8 text
 "
 
-Dependencies:
+NonStandard Dependencies:
 xlrd python package  -  http://www.python-excel.org/
 
 Considerations:
@@ -33,6 +33,12 @@ An sqlite database, one will be created at the specified path if it does not alr
 
 readFromXls.py:
 Main file. 
+Opens a database connection.
+Opens Excel file.
+Calls createTable.py to create the table. Commits changes.
+Calls fillTable.py to fill the table. 
+Closes database.
+(Note: the excel workbook is implicitly closed by xlrd)
 
 createTable.py:
 Creates a table in the database with the naming convention bookname_sheetname.
@@ -42,6 +48,7 @@ Important note! This function will drop an existing table if one of the same nam
 
 fillTable.py:
 Fills the table with data from the Excel sheet.
+A buffer can be provided as a parameter by the user for how many rows are to be inserted at one time. Default is 100.
 
 
 

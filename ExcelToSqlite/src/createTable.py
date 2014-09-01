@@ -1,6 +1,4 @@
 '''
-Created on Aug 31, 2014
-
 @author: Natalie
 @attention: If a table already exists with the name 'workbook_name'_'sheet_name', existing will be DROPPED and new table created.
     No distinction is made regarding filetype (ie - workbook.xls and workbook.xlsx will be treated the same)
@@ -24,9 +22,8 @@ Created on Aug 31, 2014
 
 '''
 
-# helper to scrub column names
+# helper to scrub column/table names
 # todo THIS NEEDS WORK!, what if a sheet is named something all crazy like '((('
-# research what is allowed in names of xls sheets 
 def scrub(colname):
     scrubus = [';', ',', '(', ')', ' ', '!']
     scrubbed = colname
@@ -34,17 +31,20 @@ def scrub(colname):
         scrubbed = scrubbed.split(s)
         scrubbed = ''.join(scrubbed)
     return scrubbed
-        
+
+# main function, create the table        
 def create(workbook_name, worksheet, sheet_name, cursor, header):
     # is this an empty sheet?
     if worksheet.nrows == 0:
+        # don't do anything
         return (None, None, None)
     # only the header row
     elif worksheet.nrows == 1 and header:
+        # don't do anything
         return (None, None, None)
     # header row plus some data or just data
     else:
-        # Cell Types: 0=Empty, 1=Text, 2=Number, 3=Date, 4=Boolean, 5=Error, 6=Blank
+        # xlrd Cell class datatypes: 0=Empty, 1=Text, 2=Number, 3=Date, 4=Boolean, 5=Error, 6=Blank
         # corresponding map to sqlite data types
         typemap = ['NULL', 'TEXT', 'REAL', 'DATE', 'TEXT', 'TEXT', 'TEXT' ]
         # name this table
@@ -54,6 +54,7 @@ def create(workbook_name, worksheet, sheet_name, cursor, header):
         firstRow = worksheet.row(0)
         col_names = []
         datatypes = []
+        # if this row is a header row
         if header:
             # checked earlier, if there is a header row
             # there must be at least one additional row
@@ -75,6 +76,7 @@ def create(workbook_name, worksheet, sheet_name, cursor, header):
             startDataRow = 0
         # if one or more of the datatypes is null, scan the column until a non null datatype is found
         nullcols = [i for i, j in enumerate(datatypes) if j == 'NULL']
+        # for each null column
         for n in nullcols:
             # condense a column slice to a set
             # ignore the first row - it is either null, or a header(TEXT)
@@ -90,7 +92,7 @@ def create(workbook_name, worksheet, sheet_name, cursor, header):
             
             
         # create table
-        # NOTE no scubbing done here! THIS IS VERY DANGEROUS!!
+        # TODO, as far as I know, there is no way to use parameters to create a table :(
         createStr = 'CREATE TABLE ' + tablename + '(' + ','.join(map(lambda (x): str(x[0]) + ' ' + str(x[1]), zip(col_names, datatypes))) + ')'
         try:
             cursor.execute(createStr)  

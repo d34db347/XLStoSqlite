@@ -1,6 +1,4 @@
 '''
-Created on Aug 2, 2014
-
 @author: Natalie
 @attention: Will not work for password protected workbooks. This is a limitation of xlrd.
 @attention: As far as I know, you also cannot password protect sqlite databases...
@@ -22,11 +20,6 @@ Created on Aug 2, 2014
 @raise Any error that can be raised by sqlite3. http://legacy.python.org/dev/peps/pep-0249/
     
 '''
-# TODO naming convention for tables, currently xlsname_sheetname
-# TODO input parameters with workbook path 
-# TODO null objects
-
-
 import sqlite3
 import xlrd
 import argparse
@@ -64,7 +57,6 @@ header = not args.nohdr
 # how many rows to be inserted at a time
 buff = args.buffer
 
-
 # open database
 conn = sqlite3.connect(db)
 c = conn.cursor()
@@ -94,4 +86,6 @@ for sheet in workbook.sheet_names():
 # commit changes and close db
 conn.commit()
 conn.close()
+
+
 

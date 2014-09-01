@@ -1,6 +1,4 @@
 '''
-Created on Aug 31, 2014
-
 @author: Natalie
 @param sheet: an xlrd sheet object, 
     https://secure.simplistix.co.uk/svn/xlrd/trunk/xlrd/doc/xlrd.html?p=4966#sheet.Sheet-class
@@ -50,15 +48,19 @@ def fill(sheet, start, cursor, tablename, datemode, datatypes, buff, conn):
     ranges[0][0] = start
     # modify last entry
     ranges[ninserts - 1][1] = ((ninserts - 1)*buff) + sheet.nrows%buff
+    # for each insert
     for i in range(ninserts):
         vals = []
+        # get cell values for each row
         for n in range(ranges[i][0], ranges[i][1]):
             l =  [cell.value for cell in sheet.row(n)]
             #convert dates
             for d in datecols:
                 l[d] = convertToDate(l[d], datemode)
             vals.append(tuple(l))
+        # execute this insert
         cursor.executemany(insertStr, vals)
+        # commit this insert
         conn.commit()
    
     
