@@ -54,8 +54,8 @@ goodext = ['xls', 'xlsx']
 xt = xlsfile.split('.')
 if xt[len(xt) - 1] not in goodext:
     raise ValueError('Input file must be .xls or .xlsx filetype')
-# get name of workbook
-workbook_name = xt[0] if len(xt)==2 else ''.join(xt[:-1])
+# get name of workbook (note '.' will be removed if it exists in filename)
+workbook_name = ''.join(xt[:-1])
 # does this data have header rows?
 header = not args.nohdr
 # how many rows to be inserted at a time
