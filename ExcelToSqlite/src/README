@@ -1,0 +1,47 @@
+This was some random job I found on freelancer.com. I didn't get the gig, but decided to implement it anyway for fun! Here is the 
+original description:
+"
+Project Description: 
+I need a script (e.g. python) to convert data from excel file to sqlite database. 
+I am already having sqlite database created and I need the script to create tables 
+with data from each excel file (.xlxs) file I am having. I might need to define the 
+following parameters in the script:
+
+* Database file path
+* Excel file path
+* Required SQLite table name
+
+The script shall create the SQLite table structure (columns, data) based on the 
+defined excel file. Please note the excel file is having data with UTF-8 text
+"
+
+Dependencies:
+xlrd python package  -  http://www.python-excel.org/
+
+Considerations:
+http://www.sqlite.org/limits.html
+
+Notes:
+Takes an Excel file. This file must not be password protected.
+Creates table(s) in sqlite database per sheet in file with naming convention bookname_sheetname, removing non allowed characters for
+column name, ie - "Sheet2 (2)" -> Sheet22.
+Reads data from Excel file into sqlite database.
+
+Input:
+An existing Excel file. 
+An sqlite database, one will be created at the specified path if it does not already exist.
+
+readFromXls.py:
+Main file. 
+
+createTable.py:
+Creates a table in the database with the naming convention bookname_sheetname.
+Scans FIRST ROW of data to determine datatypes.
+If a NULL datatype is found in first row, scans down column to determine type. If no other type exists, determines column is TEXT.
+Important note! This function will drop an existing table if one of the same name already exists. 
+
+fillTable.py:
+Fills the table with data from the Excel sheet.
+
+
+
